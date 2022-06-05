@@ -4,15 +4,19 @@ from . import __version__, extract_subtitles
 
 
 def main():
-    parser = argparse.ArgumentParser('ts-cc-extractor')
-    parser.add_argument('-i', dest='ts_path', metavar='PATH', required=True,
-                        help='Path to *.ts file')
-    parser.add_argument('-o', dest='out_path', metavar='PATH', required=True,
-                        help='Output subtitles file')
-    parser.add_argument('-f', dest='format', choices=['SRT', 'VTT'], default='SRT',
-                        help='Subtitles format (default: %(default)s)')
-    parser.add_argument('-v', '--version', action='version',
-                        version=f'%(prog)s {__version__}')
+    parser = argparse.ArgumentParser('ts-cc-extractor', add_help=False)
+    required_group = parser.add_argument_group('required arguments')
+    optional_group = parser.add_argument_group('optional arguments')
+    required_group.add_argument('-i', dest='ts_path', metavar='PATH', required=True,
+                                help='Path to *.ts file')
+    required_group.add_argument('-o', dest='out_path', metavar='PATH', required=True,
+                                help='Output subtitles file')
+    optional_group.add_argument('-f', dest='format', choices=['SRT', 'VTT'], default='SRT',
+                                help='Subtitles format (default: %(default)s)')
+    optional_group.add_argument('-v', '--version', action='version',
+                                version=f'%(prog)s {__version__}')
+    optional_group.add_argument('-h', '--help', action='help',
+                                help='show this help message and exit')
 
     args = parser.parse_args()
 

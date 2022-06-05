@@ -18,14 +18,16 @@ pip install ts-cc-extractor
 ## Usage
 
 ```
-usage: ts-cc-extractor [-h] -i PATH -o PATH [-f {SRT,VTT}] [-v]
+usage: ts-cc-extractor -i PATH -o PATH [-f {SRT,VTT}] [-v] [-h]
 
-optional arguments:
-  -h, --help     show this help message and exit
+required arguments:
   -i PATH        Path to *.ts file
   -o PATH        Output subtitles file
+
+optional arguments:
   -f {SRT,VTT}   Subtitles format (default: SRT)
   -v, --version  show program's version number and exit
+  -h, --help     show this help message and exit
 ```
 
 
