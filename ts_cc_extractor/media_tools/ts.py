@@ -38,13 +38,7 @@ MPEG2 Transport Stream parser
 #pylint: disable=line-too-long
 
 import time
-import struct
-import socket
-import select
-import http.client
 import binascii
-import optparse
-import urllib.parse
 import datetime
 
 
@@ -202,14 +196,6 @@ def get_stream_type(stream_type):
     if stream_type in STREAM_TYPES.keys():
         return STREAM_TYPES[stream_type]
     return 'unknown'
-
-def create_socket(port, host):
-    sock = socket.socket(socket.AF_INET, socket.SOCK_DGRAM, socket.IPPROTO_UDP)
-    sock.setsockopt(socket.SOL_SOCKET, socket.SO_REUSEADDR, 1)
-    sock.bind(('', port))
-    mreq = struct.pack("=4sl", socket.inet_aton(host), socket.INADDR_ANY)
-    #sock.setsockopt(socket.IPPROTO_IP, socket.IP_ADD_MEMBERSHIP, mreq)
-    return sock
 
 class bitreader:
     def __init__(self, buffer):

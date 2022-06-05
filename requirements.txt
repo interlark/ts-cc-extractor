@@ -1,2 +1,1 @@
-pyvtt>=0.0.4
-pysrt>=1.1.2
+pycaption>=2.0.9

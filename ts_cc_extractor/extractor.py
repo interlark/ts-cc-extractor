@@ -7,11 +7,8 @@ import time
 from contextlib import contextmanager
 from typing import TYPE_CHECKING
 
-import pysrt
-import pyvtt
+from pycaption import CaptionReadError, SCCReader, SRTWriter, WebVTTWriter
 
-from .media_tools.cea608towebvtt import WebVTTWriter
-from .media_tools.scc import SccParser
 from .media_tools.ts import handle_file
 
 logger = logging.getLogger(__name__)
@@ -64,9 +61,6 @@ def extract_scc(ts_file: bytes | IO[bytes], **options) -> list[ResultFile]:
                 'content': ...,
             },
         ]
-
-    Note:
-        ATSC - CEA-708
     """
     cc_files: list[ResultFile] = []
     options = set_options(options)
@@ -83,97 +77,31 @@ def extract_scc(ts_file: bytes | IO[bytes], **options) -> list[ResultFile]:
     return cc_files
 
 
-def convert_scc_vtt(scc_file: str | IO[str],
-                    split_lines: bool = False) -> list[ResultFile]:
-    """Convert `SCC` to `VTT` subtitles:
-
-    Args:
-        scc_file: CEA-608 SCC file
-
-    Returns:
-        List of files:
-        [
-            {
-                'channel': 0 | 1,
-                'content': ...,
-            },
-        ]
-    """
-    if isinstance(scc_file, str):
-        scc_file = io.StringIO(scc_file)
-
-    vtt_ch0 = WebVTTWriter(combineConsecutiveRows=(not split_lines), channel=1)
-    vtt_ch1 = WebVTTWriter(combineConsecutiveRows=(not split_lines), channel=2)
-    SccParser(scc_file, vtt_ch0, vtt_ch1)
-
-    vtt_files: list[ResultFile] = \
-        [y for y in [x.get_vtt() for x in (vtt_ch0, vtt_ch1)] if y]
-
-    return vtt_files
-
-
-def extract_subtitles(ts_file: bytes | IO[bytes], fmt: str = 'SRT',
-                      split_lines: bool = False,
-                      merge_similar: bool = True,
-                      **options) -> str | None:
+def extract_subtitles(ts_file: bytes | IO[bytes], fmt: str = 'SRT', **options) -> str | None:
     """Extract subtitles out of TS file.
 
     Args:
         ts_file: TS file
         format: 'SRT' or 'VTT'
     """
-    if merge_similar and split_lines:
-        merge_similar = False
-
     scc_files = extract_scc(ts_file, **options)
     if not scc_files:
         logger.error('No EIA captions found!')
         return None
 
-    scc_file = scc_files[0]  # TODO extract all files?
+    # TODO extract all files?
+    for scc_file in scc_files:
+        try:
+            scc_captions = SCCReader().read(content=scc_file['content'])
+            break
+        except CaptionReadError:
+            scc_captions = None
 
-    vtt_files = convert_scc_vtt(scc_file['content'], split_lines)
-    if not vtt_files:
-        logger.error('Failed to convert SCC captions!')
+    if not scc_captions:
+        logger.error('SCC caption read failed!')
         return None
 
-    vtt_file = vtt_files[0]  # TODO convert all files?
-
-    subs = pyvtt.from_string(vtt_file['content'])
-
-    # https://dvcs.w3.org/hg/text-tracks/raw-file/default/608toVTT/608toVTT.html
-    vtt_cue_lines = {'1': '10%', '2': '15.33%', '3': '20.66%', '4': '26%', '5': '31.33%', '6': '36.66%',
-                     '7': '42%', '8': '47.33%', '9': '52.66%', '10': '58%', '11': '63.33%',
-                     '12': '68.66%', '13': '74%', '14': '79.33%', '15': '84.66%'}
-
-    for cue in subs:
-        cue.text = cue.text.strip()
-        cue.position = 'line:' + vtt_cue_lines[cue.position.split(':')[1]]
-
-    if merge_similar:
-        max_ms_between_cues = 250
-        empty_cues = []
-        for cue_idx, cue in enumerate(subs):
-            if cue_idx < len(subs) - 1:
-                next_cue = subs[cue_idx + 1]
-                if next_cue.start - cue.end <= max_ms_between_cues \
-                        and next_cue.text.startswith(cue.text):
-                    next_cue.start = cue.start
-                    empty_cues.append(cue_idx)
-
-        for cue_idx in reversed(empty_cues):
-            del subs[cue_idx]
-
     if fmt.upper() == 'SRT':
-        srt_cues = []
-        for cue_idx, cue in enumerate(subs, 1):
-            srt_cues.append(
-                pysrt.SubRipItem(
-                    index=cue_idx, start=cue.start, end=cue.end, text=cue.text
-                )
-            )
-        subs = pysrt.SubRipFile(items=srt_cues)
+        return SRTWriter().write(scc_captions)
 
-    with io.StringIO() as f:
-        subs.write_into(f)
-        return f.getvalue()
+    return WebVTTWriter().write(scc_captions)

@@ -4,7 +4,7 @@
 [![Supported Python versions](https://badgen.net/pypi/python/ts-cc-extractor)](https://pypi.org/project/ts-cc-extractor)
 [![PyPi license](https://badgen.net/pypi/license/ts-cc-extractor)](https://pypi.org/project/ts-cc-extractor)
 
-With this utility you can extract __EIA-608__ captions from __Video Transport Stream__ _(*.ts)_ file
+With this pure-python utility you can extract __EIA-608__ captions from __Video Transport Stream__ _(*.ts)_ file
 and convert them to __SubRip__ _(*.srt)_ or __Video Text Tracks__ _(*.vtt)_ subtitles.
 
 
@@ -18,15 +18,13 @@ pip install ts-cc-extractor
 ## Usage
 
 ```
-usage: ts-cc-extractor [-h] -i PATH -o PATH [-f {SRT,VTT}] [--no-merge] [--split-lines] [-v]
+usage: ts-cc-extractor [-h] -i PATH -o PATH [-f {SRT,VTT}] [-v]
 
 optional arguments:
   -h, --help     show this help message and exit
   -i PATH        Path to *.ts file
   -o PATH        Output subtitles file
   -f {SRT,VTT}   Subtitles format (default: SRT)
-  --no-merge     Do not merge similar cues
-  --split-lines  Split subtitles by lines
   -v, --version  show program's version number and exit
 ```
 
@@ -37,17 +35,30 @@ optional arguments:
 
 from ts_cc_extractor import extract_subtitles
 
-with open('video.ts') as f:
+with open('video1.ts') as f:
     subs_text = extract_subtitles(f, fmt='VTT')
     print(subs_text)
 ```
+```
+WEBVTT
 
+00:01.705 --> 00:03.974 align:left position:10% line:5% size:80%
+THAT'S JUST THE WAY IT GOES.
+I DONE SEEN IT TOO MANY TIMES.
+
+00:03.974 --> 00:05.609 align:left position:30% line:89% size:60%
+HEY, Y'ALL READY?
+
+...
+```
 
 ## CMD example
 
 ```
-$ ts-cc-extractor -i file.ts -o subs.srt
+$ ts-cc-extractor -i video2.ts -o subs.srt -f SRT
 $ cat subs.srt
+```
+```
 1
 00:00:01,967 --> 00:00:05,633                       
 >> HARRY AND MEGHAN WERE IN THE

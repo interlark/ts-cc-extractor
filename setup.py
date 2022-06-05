@@ -32,8 +32,7 @@ if __name__ == '__main__':
         keywords='ts extract convert eia-608 srt vtt subtitles captions',
         url='https://github.com/interlark/ts-cc-extractor',
         install_requires=[
-            'pyvtt>=0.0.4',
-            'pysrt>=1.1.2',
+            'pycaption>=2.0.9',
         ],
         classifiers=[
             "Topic :: Internet",

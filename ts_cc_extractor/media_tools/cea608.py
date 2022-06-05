@@ -236,7 +236,8 @@ class PenState(object):
 class Utf8Char(object):
     "UTF-8 character with styling and background."
 
-    def __init__(self, uchar=' ', foreground="white", underline=False, italics=False, background="black", flash="flash"):
+    def __init__(self, uchar=' ', foreground="white", underline=False,
+                 italics=False, background="black", flash="flash"):
         self.uchar = uchar  # utf-8 character
         self.penState = PenState(foreground, underline, italics, background, flash)
 
@@ -333,7 +334,8 @@ class Row(object):
             self.back_space()
         uchar = get_char_from_byte(byte)
         if self.pos >= NR_COLS:
-            logger.log("ERROR", "Cannot insert %02x (%s) at position %d. Skipping it!" % (byte, uchar, self.pos))
+            logger.log("ERROR", "Cannot insert %02x (%s) at position %d. Skipping it!" %
+                       (byte, uchar, self.pos))
             return
         self.uchars[self.pos].set_char(uchar, self.currPenState)
         self.move_cursor(1)
@@ -456,7 +458,8 @@ class CaptionScreen(object):
         self.setPen(pac_data['color'], pac_data['underline'], pac_data['italics'], "black", flash=False)
 
     def set_bkg_data(self, bkg_data):
-        "Set background/extra foreground, but first do back_space, and then insert space (backwards compatibility)."
+        "Set background/extra foreground, but first do back_space, "
+        "and then insert space (backwards compatibility)."
         logger.log("INFO", "bkg_data = %s" % bkg_data)
         self.back_space()
         self.setPen(**bkg_data)
@@ -720,7 +723,8 @@ class Cea608FieldProcessor(object):
             self.data_counters['padding'] += 2
             return
         else:
-            logger.log("DATA", "(%02x, %02x) [%02x, %02x]" % (data[0], data[1], data[0] & 0x7f, data[1] & 0x7f))
+            logger.log("DATA", "(%02x, %02x) [%02x, %02x]" %
+                       (data[0], data[1], data[0] & 0x7f, data[1] & 0x7f))
 
         cmd_found = self.parse_cmd(cleaned_data)
         if not cmd_found:
@@ -824,7 +828,7 @@ class Cea608FieldProcessor(object):
         "Parse Preable Access Codes (Table 53)."
         a, b = data
         if not (((0x11 <= a <= 0x17 or 0x19 <= a <= 0x1F) and (0x40 <= b <= 0x7F))
-                or (a in (0x10, 0x18) and (0x40 <= b <= 0x5F))):
+           or (a in (0x10, 0x18) and (0x40 <= b <= 0x5F))):
             return False
 
         if data == self.last_cmd:
@@ -865,7 +869,8 @@ class Cea608FieldProcessor(object):
             pac_index = byte - 0x40
         underline = (pac_index & 1) == 1
         if pac_index <= 0xd:
-            color = ['white', 'green', 'blue', 'cyan', 'red', 'yellow', 'magenta', 'white'][old_div(pac_index, 2)]
+            color = ['white', 'green', 'blue', 'cyan', 'red',
+                     'yellow', 'magenta', 'white'][old_div(pac_index, 2)]
         elif pac_index <= 0xf:
             italics = True
             color = 'white'

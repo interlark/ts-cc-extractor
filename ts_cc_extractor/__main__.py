@@ -11,18 +11,13 @@ def main():
                         help='Output subtitles file')
     parser.add_argument('-f', dest='format', choices=['SRT', 'VTT'], default='SRT',
                         help='Subtitles format (default: %(default)s)')
-    parser.add_argument('--no-merge', action='store_true',
-                        help='Do not merge similar cues')
-    parser.add_argument('--split-lines', action='store_true',
-                        help='Split subtitles by lines')
     parser.add_argument('-v', '--version', action='version',
                         version=f'%(prog)s {__version__}')
 
     args = parser.parse_args()
 
     with open(args.ts_path, 'rb') as f_ts:
-        subs_text = extract_subtitles(f_ts, split_lines=args.split_lines,
-                                      merge_similar=not args.no_merge, fmt=args.format)
+        subs_text = extract_subtitles(f_ts, fmt=args.format)
 
         if subs_text is not None:
             if args.out_path == '-':
