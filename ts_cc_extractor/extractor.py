@@ -17,7 +17,7 @@ from .media_tools.ts import handle_file
 logger = logging.getLogger(__name__)
 
 if TYPE_CHECKING:
-    from typing import IO, Any, Generator, Callable, TypedDict, Optional
+    from typing import IO, Any, Callable, Generator, Optional, TypedDict
 
     ResultFile = TypedDict('ResultFile', {'content': str, 'channel': int, 'type': Optional[str]})
 
@@ -141,8 +141,14 @@ def extract_subtitles(ts_file: bytes | IO[bytes], fmt: str = 'SRT',
 
     subs = pyvtt.from_string(vtt_file['content'])
 
+    # https://dvcs.w3.org/hg/text-tracks/raw-file/default/608toVTT/608toVTT.html
+    vtt_cue_lines = {'1': '10%', '2': '15.33%', '3': '20.66%', '4': '26%', '5': '31.33%', '6': '36.66%',
+                     '7': '42%', '8': '47.33%', '9': '52.66%', '10': '58%', '11': '63.33%',
+                     '12': '68.66%', '13': '74%', '14': '79.33%', '15': '84.66%'}
+
     for cue in subs:
         cue.text = cue.text.strip()
+        cue.position = 'line:' + vtt_cue_lines[cue.position.split(':')[1]]
 
     if merge_similar:
         max_ms_between_cues = 250

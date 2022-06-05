@@ -22,7 +22,7 @@ def main():
 
     with open(args.ts_path, 'rb') as f_ts:
         subs_text = extract_subtitles(f_ts, split_lines=args.split_lines,
-                                      merge_similar=not args.no_merge, format=args.format)
+                                      merge_similar=not args.no_merge, fmt=args.format)
 
         if subs_text is not None:
             if args.out_path == '-':
