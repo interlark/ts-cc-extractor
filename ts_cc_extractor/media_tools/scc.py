@@ -175,9 +175,6 @@ class SccWriter(object):
             self.file_handle.close()
             self.file_handle = None
 
-    def __del__(self):
-        self.close()
-
     def has_pts_offset(self):
         if self.pts_offset is not None:
             return True

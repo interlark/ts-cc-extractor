@@ -1150,6 +1150,9 @@ class ts_importer:
                 self.observer.on_pes(pid, pes)
         self.observer.flush()
 
+    def close(self):
+        self.observer.close()
+
     def print_cc_summary(self, video, data):
         print("CC in %s video stream" % video)
         for d in data:
@@ -1391,6 +1394,11 @@ class mpeg_video_parser:
         else:
             self.SCTE_parser.parse(reader, self.pts)
 
+    def close(self):
+        self.ATSC_parser.close()
+        self.SCTE_parser.close()
+
+
 def bit(command, num):
     return (command >> num) & 0x01
 
@@ -1538,6 +1546,10 @@ class SEIParser:
         elif int(user_identifier) == 0x47413934:
             self.ATSC_parser.parse(reader, pts)
 
+    def close(self):
+        self.ATSC_parser.close()
+
+
 class UserDataParser:
     "Baseclass for user data, and Closed Captioning in particular"
 
@@ -1568,6 +1580,11 @@ class UserDataParser:
                 cc['format'] = self.format
                 field_data.append(cc)
         return field_data
+
+    def close(self):
+        if scc is not None:
+            for writer in self.cc_writers:
+                writer.close()
 
 
 class ATSCParser(UserDataParser):
@@ -1894,6 +1911,9 @@ class h264_parser:
         if self.construction_frame:
             frames.append(self.construction_frame)
         return frames
+
+    def close(self):
+        self.sei_parser.close()
 
 SampleRates = {0 : 96000,
                1 : 88200,
@@ -2716,6 +2736,11 @@ class parser_observer(observer):
             for frame in frames:
                 log(frame)
 
+    def close(self):
+        self.h264_parser.close()
+        self.mpeg_video_parser.close()
+
+
     def get_scte35_pids(self):
         return self.scte35_pids
 
@@ -2760,3 +2785,5 @@ def handle_file(file, progress_callback=None, cc_files=None, **options):
 
     if options['verbose'] > 0:
         importer.report()
+
+    importer.close()

@@ -179,7 +179,11 @@ byte_to_utf8 = {
 def get_char_from_byte(byte):
     "Get character given byte."
     if byte in byte_to_utf8:
-        char = byte_to_utf8[byte]
+        char = (byte_to_utf8[byte]
+                .encode('latin1')
+                .decode('unicode-escape')
+                .encode('latin1')
+                .decode('utf8'))
     else:
         char = chr(byte)
     return char
