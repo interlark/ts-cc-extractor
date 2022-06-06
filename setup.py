@@ -27,7 +27,7 @@ if __name__ == '__main__':
         long_description_content_type=long_description_content_type,
         author='Andy Trofimov',
         author_email='interlark@gmail.com',
-        packages=find_packages(),
+        packages=find_packages(exclude=['tests']),
         python_requires='>=3.7',
         keywords='ts extract convert eia-608 srt vtt subtitles captions',
         url='https://github.com/interlark/ts-cc-extractor',
