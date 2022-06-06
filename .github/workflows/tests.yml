@@ -14,12 +14,13 @@ jobs:
     - name: Set up Python 3.8
       uses: actions/setup-python@v3
       with:
-        python-version: '3.8'
+        python-version: "3.8"
 
     - name: Install dependencies
       run: |
         python -m pip install --upgrade pip
         python -m pip install flake8
+
     - name: Run flake8
       run: flake8
 
@@ -34,12 +35,40 @@ jobs:
     - name: Set up Python 3.8
       uses: actions/setup-python@v3
       with:
-        python-version: '3.8'
+        python-version: "3.8"
 
     - name: Install dependencies
       run: |
         python -m pip install --upgrade pip
+        python -m pip install -e .[dev]
         python -m pip install mypy
+
     - name: Run mypy
       run: mypy
 
+  tox:
+    name: Test Tox ${{ matrix.os }} - ${{ matrix.py }}
+
+    strategy:
+      matrix:
+        os: [Ubuntu, Windows, macOS]
+        py: ["3.7", "3.8", "3.9", "3.10"]
+
+    runs-on: ${{ matrix.os }}-latest
+
+    steps:
+    - uses: actions/checkout@v3
+
+    - name: Set up Python ${{ matrix.py }}
+      uses: actions/setup-python@v3
+      with:
+        python-version: ${{ matrix.py }}
+
+    - name: Install dependencies
+      run: |
+        python -m pip install --upgrade pip
+        python -m pip install -e .[dev]
+        python -m pip install tox tox-gh-actions
+
+    - name: Test with tox
+      run: tox

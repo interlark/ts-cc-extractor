@@ -4,7 +4,7 @@
 [![Supported Python versions](https://badgen.net/pypi/python/ts-cc-extractor)](https://pypi.org/project/ts-cc-extractor)
 [![PyPi license](https://badgen.net/pypi/license/ts-cc-extractor)](https://pypi.org/project/ts-cc-extractor)
 
-With this pure-python utility you can extract __EIA-608__ captions from __Video Transport Stream__ _(*.ts)_ file
+With this pure-python utility you can extract __EIA-608 captions__ from __Video Transport Stream__ _(*.ts)_ file
 and convert them to __SubRip__ _(*.srt)_ or __Video Text Tracks__ _(*.vtt)_ subtitles.
 
 
@@ -54,7 +54,7 @@ HEY, Y'ALL READY?
 ...
 ```
 
-## CMD example
+## CLI example
 
 ```
 $ ts-cc-extractor -i video2.ts -o subs.srt -f SRT

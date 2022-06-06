@@ -11,12 +11,18 @@ from pycaption import CaptionReadError, SCCReader, SRTWriter, WebVTTWriter
 
 from .media_tools.ts import handle_file
 
-logger = logging.getLogger(__name__)
-
 if TYPE_CHECKING:
-    from typing import IO, Any, Callable, Generator, Optional, TypedDict
+    from typing import IO, Any, Callable, Generator, Optional
+
+    if sys.version_info >= (3, 8):
+        from typing import TypedDict  # noqa: FE261
+    else:
+        from typing_extensions import TypedDict
 
     ResultFile = TypedDict('ResultFile', {'content': str, 'channel': int, 'type': Optional[str]})
+
+
+logger = logging.getLogger(__name__)
 
 
 def set_options(options: dict[str, Any]) -> dict[str, Any]:
