@@ -19,7 +19,7 @@ if TYPE_CHECKING:
     else:
         from typing_extensions import TypedDict
 
-    ResultFile = TypedDict('ResultFile', {'content': str, 'channel': int, 'type': Optional[str]})
+    SCCFile = TypedDict('ResultFile', {'content': str, 'channel': int, 'type': Optional[str]})
 
 
 logger = logging.getLogger(__name__)
@@ -55,7 +55,7 @@ def show_progress(mininterval: float = 0.1) -> Generator[Callable[[int, int, boo
         _show_progress(1, 1, is_final=True)
 
 
-def extract_scc(ts_file: bytes | IO[bytes], **options) -> list[ResultFile]:
+def extract_scc(ts_file: bytes | IO[bytes], **options) -> list[SCCFile]:
     """Extracts CEA-608 `SCC` (Scenarist Closed Captions) from `TS`.
 
     Returns:
@@ -68,7 +68,7 @@ def extract_scc(ts_file: bytes | IO[bytes], **options) -> list[ResultFile]:
             },
         ]
     """
-    cc_files: list[ResultFile] = []
+    cc_files: list[SCCFile] = []
     options = set_options(options)
 
     if isinstance(ts_file, bytes):
@@ -88,7 +88,7 @@ def extract_subtitles(ts_file: bytes | IO[bytes], fmt: str = 'SRT', **options) -
 
     Args:
         ts_file: TS file
-        format: 'SRT' or 'VTT'
+        format: Subtitles format: 'SRT' or 'VTT'
     """
     scc_files = extract_scc(ts_file, **options)
     if not scc_files:
