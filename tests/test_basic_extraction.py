@@ -35,7 +35,7 @@ def check_subtitles(subs_content: str, sample_file: pathlib.Path, reader: BaseRe
 
 
 @pytest.mark.parametrize('fmt, sample_file, reader', testdata)
-def test_cc_extraction(fmt, sample_file, reader):
+def test_basic_extraction(fmt, sample_file, reader):
     with open(VIDEO_SAMPLE, 'rb') as f:
         subs_content = extract_subtitles(f, fmt=fmt)
         check_subtitles(subs_content, sample_file, reader)
