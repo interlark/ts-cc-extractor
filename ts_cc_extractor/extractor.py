@@ -32,7 +32,7 @@ def set_options(options: dict[str, Any]) -> dict[str, Any]:
         'text': False,  # If text data should be logged
         'verbose': 0,  # Verbose level
         'log_cc': False,  # CC logging
-        'show_progress': True,  # Show progress in stderr'
+        'show_progress': True,  # Show progress in stderr
     }
 
     return {**default_options, **options}
