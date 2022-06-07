@@ -19,7 +19,7 @@ if TYPE_CHECKING:
     else:
         from typing_extensions import TypedDict
 
-    SCCFile = TypedDict('ResultFile', {'content': str, 'channel': int, 'type': Optional[str]})
+    SCCFile = TypedDict('SCCFile', {'content': str, 'channel': int, 'type': Optional[str]})
 
 
 logger = logging.getLogger(__name__)
