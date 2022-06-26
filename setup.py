@@ -54,6 +54,6 @@ if __name__ == '__main__':
             'Programming Language :: Python :: 3.10',
             'License :: OSI Approved :: BSD License',
         ],
-        license='MIT',
+        license='BSD',
         entry_points={'console_scripts': ['ts-cc-extractor = ts_cc_extractor.__main__:main']},
     )
